@@ -142,3 +142,6 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+
+# folder used by selenium chromedriver to store user data (including, most importantly, the Spotify credentials)
+chrome-user-data

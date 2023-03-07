@@ -41,12 +41,10 @@ export async function waitUntilInitialized() {
   await driver.wait(isInitialized);
 }
 
-export async function isLoggedIn() {
-  const loginButton = await waitForElementWithAttributeAndValue(
-    'data-testid',
-    'login-button'
-  );
-  const buttonText = await loginButton.getText();
-  console.log('buttonText', buttonText);
-  return buttonText.trim().toLowerCase() !== 'log in';
+export async function checkIfLoggedIn() {
+  return getElementWithAttributeAndValue('data-testid', 'login-button')
+    .then(el => el.getText())
+    .then(text => text.trim().toLowerCase() !== 'log in')
+    .then(() => false)
+    .catch(() => true);
 }

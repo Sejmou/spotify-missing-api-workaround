@@ -19,25 +19,36 @@ const passwordPrompt = [
 ];
 
 export async function login() {
+  const loginButton = await driver.findElement(
+    By.xpath("//*[@data-testid='login-button']")
+  );
+  await loginButton.click();
+
   const email = await inquirer
     .prompt(emailPrompt)
     .then(answers => answers.email);
   const password = await inquirer
     .prompt(passwordPrompt)
     .then(answers => answers.password);
-  const loginButton = await driver.findElement(
-    By.xpath("//*[@data-testid='login-button']")
-  );
-  await loginButton.click();
+
   const emailInput = await driver.wait(
     until.elementLocated(By.id('login-username'))
   );
-  await emailInput.sendKeys(email);
   const passwordInput = await driver.wait(
     until.elementLocated(By.id('login-password'))
   );
+  await emailInput.clear();
+  await emailInput.sendKeys(email);
+  await passwordInput.clear();
   await passwordInput.sendKeys(password);
 
   await driver.wait(until.elementLocated(By.id('login-button'))).click();
-  await driver.wait(until.titleContains('Player'));
+  try {
+    await driver.wait(until.titleContains('Player'), 3000);
+  } catch (e) {
+    console.log('Login failed, please try again.');
+    emailInput.clear();
+    passwordInput.clear();
+    await login();
+  }
 }

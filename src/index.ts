@@ -4,7 +4,8 @@ import chrome from 'selenium-webdriver/chrome';
 import { Builder } from 'selenium-webdriver';
 import getSongCredits from './song-credits';
 import { login } from './login';
-import { getElementWithAttributeAndValue } from './utils';
+import { checkIfLoggedIn, getElementWithAttributeAndValue } from './utils';
+import path from 'path';
 
 const screen = {
   width: 1920,
@@ -19,6 +20,9 @@ const options = new chrome.Options().windowSize(screen);
 if (browserOpenBehavior === 'headless') {
   options.headless();
 }
+
+const userDataDir = path.join(__dirname, '..', 'chrome-user-data');
+options.addArguments(`user-data-dir=${userDataDir}`);
 
 export const driver = new Builder()
   .forBrowser('chrome')
@@ -50,16 +54,11 @@ app.listen(port, () => {
 
 async function init() {
   await driver.get('https://open.spotify.com/');
-  const loggedIn = await getElementWithAttributeAndValue(
-    'data-testid',
-    'login-button'
-  )
-    .then(el => el.getText())
-    .then(text => text.trim().toLowerCase() !== 'log in');
+  const loggedIn = await checkIfLoggedIn();
 
-  console.log('loggedIn', loggedIn);
+  console.log(loggedIn ? 'logged in' : 'not logged in');
   if (!loggedIn) {
     await login();
-    console.log('logged in');
+    console.log('logged in successfully');
   }
 }
