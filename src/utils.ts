@@ -1,5 +1,5 @@
-import { By, until } from 'selenium-webdriver';
-import { driver, isInitialized } from '.';
+import { By, until, WebElement } from 'selenium-webdriver';
+import { driver } from '.';
 
 export interface TypedRequestBody<T> extends Express.Request {
   body: T;
@@ -34,11 +34,54 @@ export async function getElementWithAttributeAndValue(
 }
 
 export async function waitForElementWithId(id: string) {
-  return await driver.wait(until.elementLocated(By.id(id))).click();
+  return await driver.wait(until.elementLocated(By.id(id)));
 }
 
-export async function waitUntilInitialized() {
-  await driver.wait(isInitialized);
+export async function getElementWithId(id: string) {
+  return await driver.findElement(By.id(id));
+}
+
+export async function waitForElementContainingTextCaseInsensitive(
+  tagName: string,
+  text: string
+) {
+  return await driver.wait(
+    until.elementLocated(
+      By.xpath(
+        `//${tagName}[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '${text}')]`
+      )
+    )
+  );
+}
+
+export async function getElementContainingTextCaseInsensitive(
+  tagName: string,
+  text: string,
+  parent?: WebElement
+) {
+  const element = parent || driver;
+  return await element.findElement(
+    By.xpath(
+      `//${tagName}[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '${text}')]`
+    )
+  );
+}
+
+export async function getElementsContainingTextCaseInsensitive(
+  tagName: string,
+  text: string,
+  parent?: WebElement
+) {
+  const element = parent || driver;
+  return await element.findElements(
+    By.xpath(
+      `//${tagName}[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '${text}')]`
+    )
+  );
+}
+
+export async function getElementWithClassName(className: string) {
+  return await driver.findElement(By.className(className));
 }
 
 export async function checkIfLoggedIn() {

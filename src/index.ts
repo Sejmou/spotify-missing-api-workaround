@@ -4,7 +4,7 @@ import chrome from 'selenium-webdriver/chrome';
 import { Builder } from 'selenium-webdriver';
 import getSongCredits from './song-credits';
 import { login } from './login';
-import { checkIfLoggedIn, getElementWithAttributeAndValue } from './utils';
+import { checkIfLoggedIn } from './utils';
 import path from 'path';
 
 const screen = {
@@ -14,7 +14,7 @@ const screen = {
 
 type BrowserOpenBehavior = 'headless' | 'minimized' | 'normal'; // minimized option is useful if you want to see what's going on but not have browser open across whole screen every time server restarts lol
 const browserOpenBehavior: BrowserOpenBehavior =
-  'minimized' as BrowserOpenBehavior; // "widening" type so that I don't get errors in if statements below lol
+  'normal' as BrowserOpenBehavior; // "widening" type so that I don't get errors in if statements below lol
 
 const options = new chrome.Options().windowSize(screen);
 if (browserOpenBehavior === 'headless') {
@@ -31,11 +31,6 @@ export const driver = new Builder()
 
 if (browserOpenBehavior === 'minimized') {
   driver.manage().window().minimize();
-}
-
-let initialized = false;
-export function isInitialized() {
-  return initialized;
 }
 
 dotenv.config();
